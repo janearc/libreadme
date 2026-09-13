@@ -87,6 +87,20 @@ func (c RGB) Hex() string {
 }
 
 // Luminance is WCAG's relative luminance, 0 (black) to 1 (white).
+//
+// Yes, 0.03928. Before you write in: the sRGB standard puts the break in
+// its curve at 0.04045, and WCAG 2.0 copied it as 0.03928 in 2008, from
+// an earlier draft, and has carried the typo through every revision
+// since because fixing it would change the fourth decimal of a number
+// that has been in accessibility audits for fifteen years. The
+// difference moves a contrast ratio by less than one part in ten
+// thousand and has never once changed whether a colour passed. This
+// library uses WCAG's number, on purpose, because its promise is that
+// its ratios agree with any auditor's tool to every printed digit, and
+// every auditor's tool has the typo. A library that fixed it would be
+// more correct and less useful. If that offends you, the sRGB curve
+// with the right constant is in libtheme-css, where correctness is the
+// promise and nobody is being audited.
 func Luminance(c RGB) float64 {
 	lin := func(v float64) float64 {
 		v /= 255
