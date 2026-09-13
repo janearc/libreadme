@@ -11,7 +11,22 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/janearc/libtheme-css/spaces/srgb"
 )
+
+// libtheme-css is the first customer relationship this library has: the
+// lamp arithmetic that used to live here, hex, the hsl cylinder, now comes
+// from there, and this package keeps only what is its own promise: WCAG's
+// luminance and contrast, and compositing. The boundary is one multiply:
+// libreadme's channels are 0 to 255 because that is what a stylesheet
+// says, libtheme's are 0 to 1 because that is what a lamp is.
+
+// lamps is the colour in libtheme's terms.
+func (c RGB) lamps() srgb.RGB { return srgb.RGB{R: c.R / 255, G: c.G / 255, B: c.B / 255} }
+
+// fromLamps is libtheme's colour in this library's terms.
+func fromLamps(c srgb.RGB) RGB { return RGB{c.R * 255, c.G * 255, c.B * 255} }
 
 // RGB is an opaque colour, channels 0 to 255.
 type RGB struct{ R, G, B float64 }
@@ -31,23 +46,11 @@ func Parse(s string) (RGBA, error) {
 	s = strings.TrimSpace(s)
 	switch {
 	case strings.HasPrefix(s, "#"):
-		h := s[1:]
-		if len(h) == 3 {
-			h = string([]byte{h[0], h[0], h[1], h[1], h[2], h[2]})
+		c, err := srgb.FromHex(s)
+		if err != nil {
+			return RGBA{}, fmt.Errorf("colour: %q is not #rgb or #rrggbb: %w", s, err)
 		}
-		if len(h) != 6 {
-			return RGBA{}, fmt.Errorf("colour: %q is not #rgb or #rrggbb", s)
-		}
-		var c RGBA
-		for i, p := range []*float64{&c.R, &c.G, &c.B} {
-			v, err := strconv.ParseUint(h[i*2:i*2+2], 16, 8)
-			if err != nil {
-				return RGBA{}, fmt.Errorf("colour: %q: %w", s, err)
-			}
-			*p = float64(v)
-		}
-		c.A = 1
-		return c, nil
+		return RGBA{fromLamps(c), 1}, nil
 	case strings.HasPrefix(s, "rgb(") || strings.HasPrefix(s, "rgba("):
 		inner := strings.TrimSuffix(s[strings.IndexByte(s, '(')+1:], ")")
 		parts := strings.FieldsFunc(inner, func(r rune) bool { return r == ',' || r == ' ' || r == '/' })
@@ -81,10 +84,7 @@ func MustParse(s string) RGBA {
 }
 
 // Hex renders a colour as #rrggbb, clamped and rounded.
-func (c RGB) Hex() string {
-	clamp := func(v float64) int { return int(math.Round(math.Min(255, math.Max(0, v)))) }
-	return fmt.Sprintf("#%02x%02x%02x", clamp(c.R), clamp(c.G), clamp(c.B))
-}
+func (c RGB) Hex() string { return c.lamps().Hex() }
 
 // Luminance is WCAG's relative luminance, 0 (black) to 1 (white).
 //
@@ -145,64 +145,13 @@ func Painted(ground RGB, layers ...RGBA) RGB {
 // (both 0 to 1). Lightness is the one dimension the solvers move: hue and
 // saturation are where a colour's meaning lives.
 func HSL(c RGB) (h, s, l float64) {
-	r, g, b := c.R/255, c.G/255, c.B/255
-	mx, mn := math.Max(r, math.Max(g, b)), math.Min(r, math.Min(g, b))
-	l = (mx + mn) / 2
-	if mx == mn {
-		return 0, 0, l
-	}
-	d := mx - mn
-	if l > 0.5 {
-		s = d / (2 - mx - mn)
-	} else {
-		s = d / (mx + mn)
-	}
-	switch mx {
-	case r:
-		h = (g - b) / d
-		if g < b {
-			h += 6
-		}
-	case g:
-		h = (b-r)/d + 2
-	default:
-		h = (r-g)/d + 4
-	}
-	return h * 60, s, l
+	v := c.lamps().HSL()
+	return v.H, v.S, v.L
 }
 
 // FromHSL is HSL's inverse.
 func FromHSL(h, s, l float64) RGB {
-	if s == 0 {
-		v := l * 255
-		return RGB{v, v, v}
-	}
-	h = math.Mod(h/360+1, 1)
-	var q float64
-	if l < 0.5 {
-		q = l * (1 + s)
-	} else {
-		q = l + s - l*s
-	}
-	p := 2*l - q
-	f := func(t float64) float64 {
-		if t < 0 {
-			t++
-		}
-		if t > 1 {
-			t--
-		}
-		switch {
-		case t < 1.0/6:
-			return p + (q-p)*6*t
-		case t < 1.0/2:
-			return q
-		case t < 2.0/3:
-			return p + (q-p)*(2.0/3-t)*6
-		}
-		return p
-	}
-	return RGB{f(h+1.0/3) * 255, f(h) * 255, f(h-1.0/3) * 255}
+	return fromLamps(srgb.HSL{H: h, S: s, L: l}.RGB())
 }
 
 // Saturation is a colour's saturation, 0 to 1.
