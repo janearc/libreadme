@@ -1,0 +1,22 @@
+/* a theme file the way applications actually write one: one block per
+   theme, colours as custom properties, a translucent panel. corvid as it
+   shipped before the correction (ink at 16.4:1, the glare end) and the
+   dim note text at 3.6:1, so check has something to say. */
+[data-theme="corvid"] {
+  --ground: #0b0e14;
+  --pane: rgba(20, 26, 36, 0.78);
+  --ink: #e6edf7;
+  --dim: #5f6b7e;
+  --accent: #6fa8ff;
+  --green: #3fb950;
+  --red: #e5534b;
+}
+[data-theme="vaporwave"] {
+  --ground: #140f1f;
+  --pane: rgba(28, 20, 44, 0.90);
+  --ink: #ddbeff;
+  --dim: #d1c6e4;
+  --accent: #ff7ad9;
+  --green: #5fd38a;
+  --red: #ff6b6b;
+}

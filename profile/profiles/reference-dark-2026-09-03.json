@@ -1,0 +1,46 @@
+{
+  "name": "reference-dark-2026-09-03",
+  "measured_on": "2026-09-03",
+  "method": "rendered specimens rated side by side in a browser, in a dark console, by the reference reader. Contrast was bisected to a floor and a ceiling from a ladder of ratios; size, weight, line height and letter spacing were chosen from graded specimens; the hue rule came from a chip that passed the ratio and could not be read.",
+  "evidence": [
+    "evidence/README.md",
+    "evidence/ratings.md",
+    "evidence/specimen.html",
+    "evidence/specimen2.html",
+    "evidence/specimen3.html"
+  ],
+  "contrast": {
+    "low": 10.0,
+    "high": 12.5,
+    "centre": 11.0,
+    "chip_min": 4.5,
+    "note": "prose lives in the band. Semantic colours (state chips) are scanned rather than read; they are held to the floor, not the band, because forcing them into it breaks the state vocabulary for no gain."
+  },
+  "hue": {
+    "min_separation_degrees": 40,
+    "neutral_saturation": 0.35,
+    "chip_fill_saturation": 0.18,
+    "chip_fill_lightness_step": 0.05,
+    "note": "a contrast ratio is blind to hue. Text needs a background that differs in more than brightness: either the hues are this far apart, or the background is desaturated below this, so the ink's own chroma makes the edge."
+  },
+  "type": {
+    "body_px": 24,
+    "weight": 400,
+    "line_height": 1.75,
+    "letter_spacing_em": 0.015,
+    "min_px": 16,
+    "ligatures": "none",
+    "units": "rem",
+    "note": "light text on a dark ground blooms and reads heavier than it is; the compensation is lighter weight, not bolder. Zero letter spacing read as cramped and .22em as unreadable. Nothing below the floor, anywhere. Sizes in rem so a reader's own browser setting still counts."
+  },
+  "taxes": {
+    "all_caps": "never for text a person reads; it removes the word shape a reader navigates by",
+    "tracking_max_em": 0.05,
+    "monospace": "identifiers, hashes, paths, timestamps and code only; prose in monospace loses its silhouette",
+    "note": "each of the three costs legibility on its own. Stacked, they were the worst text on every surface measured."
+  },
+  "tables": {
+    "overflow": "truncate with an ellipsis; a cell that is genuinely prose opts back in to wrapping by name",
+    "wrap": "break-word, never anywhere: anywhere also shrinks a column below its longest word and breaks identifiers mid-token"
+  }
+}

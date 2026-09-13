@@ -1,0 +1,136 @@
+<!doctype html><meta charset="utf-8"><title>legibility specimens</title>
+<style>
+:root{--ground:#0b0e14;--raised:#11161f;--ink:#e6edf7;--rule:#232d3d;
+ --sans:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+ padding:40px 32px 120px}
+.wrap{max-width:1180px;margin:0 auto}
+h1{font-size:34px;letter-spacing:-.02em;margin:0 0 6px}
+.sub{color:#8b98ad;font-size:17px;margin:0 0 34px;max-width:70ch;line-height:1.6}
+.spec{border:1px solid var(--rule);border-radius:12px;background:var(--raised);
+ padding:26px 30px;margin:0 0 22px}
+.tag{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+ color:#e8a33d;margin:0 0 4px}
+.what{font-family:var(--mono);font-size:12.5px;color:#5f6b7e;margin:0 0 18px}
+.prose{max-width:66ch}
+.prose p{margin:0 0 14px}
+.note{text-transform:uppercase;letter-spacing:.09em;margin-top:14px}
+/* A: exactly what dodo ships today */
+.a .prose{color:#8b98ad;font-size:20px;line-height:1.6;letter-spacing:0;font-weight:400}
+.a .note{color:#5f6b7e;font-size:17px}
+/* B: contrast only */
+.b .prose{color:#b3bcc9;font-size:20px;line-height:1.6;letter-spacing:0;font-weight:400}
+.b .note{color:#748296;font-size:17px}
+/* C: + leading */
+.c .prose{color:#b3bcc9;font-size:20px;line-height:1.75;letter-spacing:0;font-weight:400}
+.c .note{color:#748296;font-size:17px}
+/* D: + tracking */
+.d .prose{color:#b3bcc9;font-size:20px;line-height:1.75;letter-spacing:.01em;font-weight:400}
+.d .note{color:#748296;font-size:17px}
+/* E: + weight */
+.e .prose{color:#b3bcc9;font-size:20px;line-height:1.75;letter-spacing:.01em;font-weight:500}
+.e .note{color:#748296;font-size:17px;font-weight:500}
+/* F: + the roomier size scale */
+.f .prose{color:#b3bcc9;font-size:24px;line-height:1.75;letter-spacing:.01em;font-weight:500}
+.f .note{color:#748296;font-size:20px;font-weight:500}
+</style>
+<div class="wrap">
+<h1>Six specimens, one change each</h1>
+<p class="sub">Each block adds ONE thing to the one above it, so you can say where it
+stops helping rather than judging a bundle. A is exactly what dodo ships today.
+Read a whole paragraph in each — the smearing you described shows up over lines,
+not over words. Thumbs up or down per letter is all I need.</p>
+
+<div class="spec a"><p class="tag">A &middot; today</p>
+<p class="what">dim #8b98ad (6.6:1) &middot; 20px &middot; line-height 1.6 &middot; no tracking &middot; weight 400</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+
+<div class="spec b"><p class="tag">B &middot; contrast only</p>
+<p class="what">dim #b3bcc9 (10.1:1) &middot; everything else unchanged from A</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+
+<div class="spec c"><p class="tag">C &middot; + more space between lines</p>
+<p class="what">line-height 1.6 &rarr; 1.75</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+
+<div class="spec d"><p class="tag">D &middot; + space between letters</p>
+<p class="what">letter-spacing 0 &rarr; 0.01em</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+
+<div class="spec e"><p class="tag">E &middot; + heavier strokes</p>
+<p class="what">weight 400 &rarr; 500. Light text on a dark ground looks thinner than it is;
+this is the compensation, and it is the one I expect to matter most for smearing.</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+
+<div class="spec f"><p class="tag">F &middot; + the roomier size scale</p>
+<p class="what">20px &rarr; 24px. This is what the density branch already does.</p>
+<div class="prose">
+<p>The gaggle pane is a control surface on four job RPCs, linking out to the bench
+and to the artifacts rather than framing them. Films are large, so this pane relays
+control and never payloads. Department switches belong to flipr: they are read on
+the flipr pane and killed on the admin emergency door.</p>
+<p>A job that was cooking when the daemon restarted is failed rather than left in
+limbo, and a job that was queued is put back on the queue in the order it was
+promised. Neither of those was true this morning, and the second one was the worse
+of the two, because the daemon looked entirely healthy while owing work it would
+never do.</p>
+<p class="note">refresh is automatic; cancel asks for your reason</p>
+</div></div>
+</div>
