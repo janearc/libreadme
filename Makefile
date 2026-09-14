@@ -15,4 +15,4 @@ build:
 clean:
 	rm -rf bin
 smoke: build
-	@./bin/libreadme check testdata/corvid.css -text ink,dim -surfaces ground,surface-1 -chips green,red,amber || true
+	@./bin/libreadme check testdata/corvid.css -text ink,dim -surfaces ground,pane -chips green,red,accent || true
