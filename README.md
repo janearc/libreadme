@@ -144,4 +144,4 @@ cylinder come from there; the luminance and contrast are this library's own.
 
     make            gofmt, go vet, go test
     make build      bin/libreadme
-    make smoke      the command against a theme that shipped with a glare ink
+    make smoke      the command passing corvid and failing a pink-as-text sheet
