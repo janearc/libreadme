@@ -144,4 +144,5 @@ cylinder come from there; the luminance and contrast are this library's own.
 
     make            gofmt, go vet, go test
     make build      bin/libreadme
-    make smoke      the command passing corvid and failing a pink-as-text sheet
+    make visualtest the command passing corvid and failing a pink-as-text sheet
+    make docs       what go doc extracts from the comments
