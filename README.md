@@ -139,4 +139,9 @@ with a light colour if that is where you read.
     cmd/        the command
     evidence/   the specimens and the ratings behind the first snapshot
 
-Go, standard library only. `go build ./...`, `go test ./...`.
+Go. One dependency, libtheme-css, for the lamp arithmetic: hex and the hsl
+cylinder come from there; the luminance and contrast are this library's own.
+
+    make            gofmt, go vet, go test
+    make build      bin/libreadme
+    make smoke      the command against a theme that shipped with a glare ink

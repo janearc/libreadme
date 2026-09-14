@@ -2,8 +2,10 @@
 // when text of one colour is painted over surfaces of others, as numbers.
 //
 // Everything here is WCAG 2.1's own relative-luminance and contrast-ratio
-// formulas, so the numbers agree with any auditor's. There are no
-// dependencies, so nothing can drift.
+// formulas, so the numbers agree with any auditor's. The lamp arithmetic,
+// hex and the hsl cylinder, comes from libtheme-css; the promise, the two
+// formulas and the compositing, is written here and has no dependency, so
+// it cannot drift.
 package colour
 
 import (
