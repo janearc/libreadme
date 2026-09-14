@@ -1,24 +1,36 @@
-  {__  {__           {__
-  {__  {__           {__
-{_{_ {_{__           {__
-  {__  {__ {__   {__ {__
-  {__  {__   {__{_   {__
-  {__  {__   {__{_   {__
-   {__ {__ {__   {__ {__
-                        
+LICENSE(7)                Jane Michelle Arc's Manual                LICENSE(7)
 
-    this is the work of jane michelle arc, 2026. all of it: she can
-    tell you how every line came to be, and will, if you ask.
+NAME
+     license - the terms under which this may be used
 
-    the license is to be decided. that is not a trick and not a
-    threat; it is a decision that deserves more thought than a
-    push, and nobody is using this yet. until it is decided, the
-    default applies, which means: ask.
+SYNOPSIS
+     license [tbd]
 
-    if you use it anyway, credit her. she would be delighted.
+DESCRIPTION
+             : :     ::::      : :
+           +  +    :    :    +  +
+         +   :    +    +   +   :
+        +#++#+   +    +   +#++#+
+           #    +    +       #
+          +    #    #       +
+         #     ####        #
 
-                                            .-.
-                                           (o o)   party parrot
-                                           | O \   was here.
-                                            \   \
-                                             `~~~'
+                                                            terminal joy
+
+     this is the work of jane michelle arc, 2026. all of it: she can tell
+     you how every line came to be, and will, if you ask.
+
+     the license is to be decided. that is not a trick and not a threat;
+     it is a decision that deserves more thought than a push, and nobody
+     is using this yet. until it is decided, the default applies, which
+     means: ask.
+
+     if you use it anyway, credit her. she would be delighted.
+
+EXIT STATUS
+     404  the license was not found. it is forthcoming.
+
+SEE ALSO
+     NOTICE, README.md, the author.
+
+jane michelle arc                    2026                          LICENSE(7)
