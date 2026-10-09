@@ -1,0 +1,54 @@
+/* aqua
+   slate blue ink on a pale aqua ground, 6.0:1. a bright ground narrows
+   the pupil, and a narrow pupil is a lens stopped down: the letters land
+   sharper. cool rather than white, so it does not sting. accents are dark
+   and cool so they read on the bright ground.
+
+   the source of a ghostty theme: `libreadme ghostty` makes it from this
+   sheet. cells 16 to 255 are --palette-N. */
+[data-theme="aqua"] {
+  --ground: #a3ffff;
+  --ink: #505880;
+  --cursor: #505880;
+  --cursor-ink: #a3ffff;
+  --surface-1: #7fe0e6;
+  --selection-ink: #2a3050;
+  --black: #1e2a38;
+  --red: #8a2a3a;
+  --green: #1f5a3a;
+  --yellow: #6a5210;
+  --blue: #1f3a8a;
+  --magenta: #6a2a7a;
+  --cyan: #0a5a6a;
+  --white: #8fe6e6;
+  --bright-black: #4a6070;
+  --bright-red: #a03548;
+  --bright-green: #2a6a46;
+  --bright-yellow: #7a6018;
+  --bright-blue: #2a4aa0;
+  --bright-magenta: #7a3a8a;
+  --bright-cyan: #146a7a;
+  --bright-white: #b8ffff;
+  --palette-17: #9df6f6;
+  --palette-18: #99f1f1;
+  --palette-24: #95eced;
+  --palette-31: #91e8e9;
+  --palette-38: #8de3e5;
+  --palette-67: #89dfe1;
+  --palette-103: #85dadd;
+  --palette-139: #81d5d8;
+  --palette-169: #79ccd0;
+  --palette-175: #7dd1d4;
+  --palette-198: #72c3c8;
+  --palette-205: #76c8cc;
+  --palette-211: #6ebec4;
+  --palette-214: #4f9aa3;
+  --palette-215: #529ea7;
+  --palette-218: #6abac0;
+  --palette-222: #56a3ab;
+  --palette-223: #5aa7af;
+  --palette-224: #5eacb3;
+  --palette-225: #66b5bb;
+  --palette-251: #505880;
+  --palette-254: #62b1b7;
+}

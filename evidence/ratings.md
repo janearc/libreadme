@@ -1,8 +1,8 @@
 # Ratings, 2026-09-03
 
-The reader's words, as recorded in the session that produced the profile,
-and the number each became. Quotations are verbatim where the record has
-them verbatim; the mapping is the measurer's.
+The reader's words, as recorded when the profile was made, and the number
+each became. Quotations are verbatim where the record has them verbatim;
+the mapping is the measurer's.
 
 ## Before any specimen
 

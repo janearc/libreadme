@@ -14,13 +14,17 @@ type Band struct {
 }
 
 // Contains reports whether a ratio sits inside the band.
-func (b Band) Contains(ratio float64) bool { return ratio >= b.Low && ratio <= b.High }
+func (b Band) Contains(ratio float64) bool {
+	return ratio >= b.Low && ratio <= b.High
+}
 
-// Into moves base's lightness until its contrast against EVERY surface sits
+// Into moves base's lightness until its contrast against every surface sits
 // inside the band, as near the centre as it can get, with hue and saturation
-// untouched. The second result is false when no lightness reaches the band
-// on all surfaces at once; the caller then knows the colour has to change,
-// not the threshold.
+// untouched.
+//
+// The second result is false when no lightness reaches the band on all
+// surfaces at once; the caller then knows the colour has to change, not the
+// threshold.
 //
 // Direction: on a dark ground the colour is lightened, on a light ground it is
 // deepened. Both directions are tried, the natural one first.
@@ -50,7 +54,9 @@ func (b Band) Into(base RGB, surfaces []RGB) (RGB, bool) {
 			}
 			if !ok {
 				if found {
-					return // the band has been crossed; further steps leave it
+					// the band has been crossed; further
+					// steps leave it
+					return
 				}
 				continue
 			}
@@ -74,12 +80,14 @@ func (b Band) Into(base RGB, surfaces []RGB) (RGB, bool) {
 	return best, found
 }
 
-// ChipFill is the background a small labelled chip is drawn on: the chip's
-// OWN hue, so it still reads as the red one or the green one, but drained of
-// saturation so the label has a colour edge against it and not only a
-// brightness edge. sat is the fill's saturation (the profile says how much);
-// step is how far the fill's lightness sits from the surface, so the chip
-// reads as an object rather than a stain.
+// ChipFill is the background a small labelled chip is drawn on. It keeps the
+// chip's own hue, so it still reads as the red one or the green one. It is
+// drained of saturation, so the label has a colour edge against it and not
+// only a brightness edge.
+//
+// sat is the fill's saturation, and the profile says how much. step is how
+// far the fill's lightness sits from the surface, so the chip reads as an
+// object rather than a stain.
 func ChipFill(ink, surface RGB, sat, step float64) RGB {
 	h, _, _ := HSL(ink)
 	_, _, sl := HSL(surface)
@@ -90,11 +98,46 @@ func ChipFill(ink, surface RGB, sat, step float64) RGB {
 	return FromHSL(h, sat, l)
 }
 
+// FillFor is the fill a label in a fixed colour is drawn on, so that it
+// reads. It starts from ChipFill's fill. When the label does not clear min
+// against it, the fill's lightness moves away from the label's until it
+// does, keeping its hue and saturation.
+//
+// ChipInk moves the ink. This is for a label whose colour is the point, a
+// colour being shown, where only the fill can move. The second result is
+// false when no lightness reaches min, and the fill is then ChipFill's.
+func FillFor(ink, surface RGB, min, sat, step float64) (RGB, bool) {
+	fill := ChipFill(ink, surface, sat, step)
+	if Contrast(ink, fill) >= min {
+		return fill, true
+	}
+	h, s, l := HSL(fill)
+	away := 1.0
+	if Luminance(ink) > Luminance(fill) {
+		away = -1
+	}
+	for _, direction := range []float64{away, -away} {
+		for moved := 0.0; moved <= 1.0; moved += 0.002 {
+			nl := l + direction*moved
+			if nl < 0 || nl > 1 {
+				break
+			}
+			candidate := FromHSL(h, s, nl)
+			if Contrast(ink, candidate) >= min {
+				return candidate, true
+			}
+		}
+	}
+	return fill, false
+}
+
 // ChipInk moves a semantic colour's lightness until its label clears min
 // against its own fill on every surface. A chip's background moves whenever
 // its ink does, so the two are solved together. Hue and saturation are never
 // touched: the meaning lives there.
-func ChipInk(base RGB, surfaces []RGB, min, fillSat, fillStep float64) (RGB, bool) {
+func ChipInk(
+	base RGB, surfaces []RGB, min, fillSat, fillStep float64,
+) (RGB, bool) {
 	if len(surfaces) == 0 {
 		return base, false
 	}
@@ -111,7 +154,8 @@ func ChipInk(base RGB, surfaces []RGB, min, fillSat, fillStep float64) (RGB, boo
 		cand := FromHSL(h, s, nl)
 		ok := true
 		for _, bg := range surfaces {
-			if Contrast(cand, ChipFill(cand, bg, fillSat, fillStep)) < min {
+			fill := ChipFill(cand, bg, fillSat, fillStep)
+			if Contrast(cand, fill) < min {
 				ok = false
 				break
 			}

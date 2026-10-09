@@ -1,0 +1,23 @@
+# vim: set filetype=game:
+
+# game: this repository
+name readme
+
+# my name is here, it is fine
+exclude NOTICE
+
+# any lint line here replaces every lint rule in your game config, so these
+# copy them all, then let the readme run past 25 rows.
+lint width 80
+lint rows 25
+lint comments
+lint print
+lint exclaim
+lint shout
+lint words hyperscaler enterprise-grade blazing-fast load-bearing
+lint paragraph 4
+lint allow README.md rows
+
+# the guide names a company on purpose; the sweep files the word under
+# session urls.
+sweep allow GUIDE.md sessions

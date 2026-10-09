@@ -1,0 +1,53 @@
+/* vaporwave-dusk
+   a small step from vaporwave for tired eyes at night: the ground a little
+   lighter, the ink warm and dim at about 6:1, every colour muted, warmer
+   and under 7:1, so nothing smears.
+
+   the source of a ghostty theme: `libreadme ghostty` makes it from this
+   sheet. cells 16 to 255 are --palette-N. */
+[data-theme="vaporwave-dusk"] {
+  --ground: #271d3b;
+  --ink: #ab9d90;
+  --cursor: #b893b4;
+  --cursor-ink: #271d3b;
+  --surface-1: #3a2260;
+  --selection-ink: #ab9d90;
+  --black: #291f3e;
+  --red: #c9958f;
+  --green: #8f9580;
+  --yellow: #c4a57a;
+  --blue: #8a93a6;
+  --magenta: #b893b4;
+  --cyan: #84aeb0;
+  --white: #a3988e;
+  --bright-black: #7f746b;
+  --bright-red: #d1a09a;
+  --bright-green: #979d88;
+  --bright-yellow: #ccae84;
+  --bright-blue: #939caf;
+  --bright-magenta: #c19dbd;
+  --bright-cyan: #8eb8ba;
+  --bright-white: #ab9d90;
+  --palette-17: #2e2444;
+  --palette-18: #322849;
+  --palette-24: #2f3550;
+  --palette-31: #2f3d55;
+  --palette-38: #32465a;
+  --palette-67: #3b4a5c;
+  --palette-103: #45475f;
+  --palette-139: #4e4560;
+  --palette-169: #5e4560;
+  --palette-175: #57445e;
+  --palette-198: #6a465d;
+  --palette-205: #64465f;
+  --palette-211: #6e4b5c;
+  --palette-214: #8a6c40;
+  --palette-215: #866f46;
+  --palette-218: #725257;
+  --palette-222: #83704c;
+  --palette-223: #806b4e;
+  --palette-224: #7d6650;
+  --palette-225: #765a55;
+  --palette-251: #a99c8f;
+  --palette-254: #7a6152;
+}

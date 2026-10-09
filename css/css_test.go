@@ -55,3 +55,16 @@ func contains(s, sub string) bool {
 	}
 	return false
 }
+
+// TestBlocksNamesEachTheme finds the two themed blocks of a file, past a
+// comment that holds a brace, and none in a block with no properties.
+func TestBlocksNamesEachTheme(t *testing.T) {
+	src := "/* a { brace } in a comment */\n" +
+		"[data-theme=\"one\"] {\n  --ink: #000;\n}\n" +
+		"body { margin: 0; }\n" +
+		"[data-theme=\"two\"] {\n  --ink: #fff;\n}\n"
+	got := Blocks(src)
+	if len(got) != 2 || got[0] != `[data-theme="one"]` || got[1] != `[data-theme="two"]` {
+		t.Errorf("blocks read as %q", got)
+	}
+}

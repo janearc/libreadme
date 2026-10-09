@@ -4,8 +4,10 @@
 // A profile is a snapshot. It is written once and never edited; a new
 // measurement is a new file with a new date. One pointer, the file named
 // current, says which snapshot applications build against. Reverting is
-// moving the pointer. Nothing here reads a home directory or an environment
-// variable: an application chooses a profile by name and gets a whole one.
+// moving the pointer.
+//
+// Nothing here reads a home directory or an environment variable: an
+// application chooses a profile by name and gets a whole one.
 package profile
 
 import (
@@ -82,14 +84,17 @@ func Names() ([]string, error) {
 func Load(name string) (Profile, error) {
 	b, err := files.ReadFile(path.Join("profiles", name+".json"))
 	if err != nil {
-		return Profile{}, fmt.Errorf("profile: no snapshot named %q", name)
+		return Profile{}, fmt.Errorf(
+			"profile: no snapshot named %q", name)
 	}
 	var p Profile
 	if err := json.Unmarshal(b, &p); err != nil {
 		return Profile{}, fmt.Errorf("profile %q: %w", name, err)
 	}
 	if p.Name != name {
-		return Profile{}, fmt.Errorf("profile %q: the file says its name is %q; a snapshot may not be renamed", name, p.Name)
+		return Profile{}, fmt.Errorf(
+			"profile %q: the file says its name is %q; "+
+				"a snapshot may not be renamed", name, p.Name)
 	}
 	return p, nil
 }
@@ -138,28 +143,38 @@ func Diff(a, b Profile) []string {
 		{"contrast.high", a.Contrast.High, b.Contrast.High},
 		{"contrast.centre", a.Contrast.Centre, b.Contrast.Centre},
 		{"contrast.chip_min", a.Contrast.ChipMin, b.Contrast.ChipMin},
-		{"hue.min_separation_degrees", a.Hue.MinSeparationDegrees, b.Hue.MinSeparationDegrees},
-		{"hue.neutral_saturation", a.Hue.NeutralSaturation, b.Hue.NeutralSaturation},
-		{"hue.chip_fill_saturation", a.Hue.ChipFillSaturation, b.Hue.ChipFillSaturation},
-		{"hue.chip_fill_lightness_step", a.Hue.ChipFillLightnessStep, b.Hue.ChipFillLightnessStep},
+		{"hue.min_separation_degrees",
+			a.Hue.MinSeparationDegrees, b.Hue.MinSeparationDegrees},
+		{"hue.neutral_saturation",
+			a.Hue.NeutralSaturation, b.Hue.NeutralSaturation},
+		{"hue.chip_fill_saturation",
+			a.Hue.ChipFillSaturation, b.Hue.ChipFillSaturation},
+		{"hue.chip_fill_lightness_step",
+			a.Hue.ChipFillLightnessStep,
+			b.Hue.ChipFillLightnessStep},
 		{"type.body_px", a.Type.BodyPx, b.Type.BodyPx},
 		{"type.weight", float64(a.Type.Weight), float64(b.Type.Weight)},
 		{"type.line_height", a.Type.LineHeight, b.Type.LineHeight},
-		{"type.letter_spacing_em", a.Type.LetterSpacingEm, b.Type.LetterSpacingEm},
+		{"type.letter_spacing_em",
+			a.Type.LetterSpacingEm, b.Type.LetterSpacingEm},
 		{"type.min_px", a.Type.MinPx, b.Type.MinPx},
-		{"taxes.tracking_max_em", a.Taxes.TrackingMaxEm, b.Taxes.TrackingMaxEm},
+		{"taxes.tracking_max_em",
+			a.Taxes.TrackingMaxEm, b.Taxes.TrackingMaxEm},
 	}
 	var out []string
 	for _, n := range nums {
 		if n.a != n.b {
-			out = append(out, fmt.Sprintf("%-32s %g -> %g", n.name, n.a, n.b))
+			out = append(out, fmt.Sprintf(
+				"%-32s %g -> %g", n.name, n.a, n.b))
 		}
 	}
 	if a.Type.Ligatures != b.Type.Ligatures {
-		out = append(out, fmt.Sprintf("%-32s %s -> %s", "type.ligatures", a.Type.Ligatures, b.Type.Ligatures))
+		out = append(out, fmt.Sprintf("%-32s %s -> %s",
+			"type.ligatures", a.Type.Ligatures, b.Type.Ligatures))
 	}
 	if a.Type.Units != b.Type.Units {
-		out = append(out, fmt.Sprintf("%-32s %s -> %s", "type.units", a.Type.Units, b.Type.Units))
+		out = append(out, fmt.Sprintf("%-32s %s -> %s",
+			"type.units", a.Type.Units, b.Type.Units))
 	}
 	return out
 }

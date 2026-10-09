@@ -11,6 +11,27 @@ import (
 
 var varLine = regexp.MustCompile(`(--[A-Za-z0-9_-]+)\s*:\s*([^;}]+)`)
 
+// comment is a css comment, and ruleBlock a selector and the body its
+// braces hold, with no brace inside.
+var (
+	comment   = regexp.MustCompile(`(?s)/\*.*?\*/`)
+	ruleBlock = regexp.MustCompile(`([^{}]+)\{([^{}]*)\}`)
+)
+
+// Blocks are the selectors of the blocks in src that hold custom
+// properties, in the file's order. A file with more than one is several
+// themes, and is read one block at a time.
+func Blocks(src string) []string {
+	found := []string{}
+	bare := comment.ReplaceAllString(src, "")
+	for _, m := range ruleBlock.FindAllStringSubmatch(bare, -1) {
+		if varLine.MatchString(m[2]) {
+			found = append(found, strings.TrimSpace(m[1]))
+		}
+	}
+	return found
+}
+
 // Vars returns every custom property in src as name -> raw value. When a
 // block selector is given (for example `[data-theme="corvid"]`), only the
 // properties inside that block are read; otherwise the whole file is.
@@ -40,19 +61,21 @@ func Vars(src, block string) map[string]string {
 
 // Rewrite returns src with the named custom properties' values replaced.
 // With no block, every definition of a name moves; with a block selector,
-// only the definitions inside that block do, because a value solved for
-// one theme's surfaces is wrong for another theme's. Comments and
-// everything else are untouched, so a diff of the result is only the
-// colours that moved.
+// only the definitions inside that block do, because a value solved for one
+// theme's surfaces is wrong for another theme's.
+//
+// Comments and everything else are untouched, so a diff of the result is
+// only the colours that moved.
 func Rewrite(src string, values map[string]string, block string) string {
 	replace := func(s string) string {
-		return varLine.ReplaceAllStringFunc(s, func(line string) string {
+		swap := func(line string) string {
 			m := varLine.FindStringSubmatch(line)
 			if v, ok := values[m[1]]; ok {
 				return m[1] + ": " + v
 			}
 			return line
-		})
+		}
+		return varLine.ReplaceAllStringFunc(s, swap)
 	}
 	if block == "" {
 		return replace(src)

@@ -1,0 +1,56 @@
+/* twilight
+   an amber ground with deep navy ink, 8.9:1. a light ground and dark ink
+   for reading at night: light text on a dark ground blooms, and the gaps
+   between words can join down the page into rivers. every accent is dark
+   and burnt, since the ground is the light one, and the 256-colour cells a
+   status line's bar uses are tints of the ground, so it reads as a tint and
+   not a box.
+
+   the source of a ghostty theme: `libreadme ghostty` makes it from this
+   sheet. cells 16 to 255 are --palette-N. */
+[data-theme="twilight"] {
+  --ground: #ffac4e;
+  --ink: #051759;
+  --cursor: #051759;
+  --cursor-ink: #ffac4e;
+  --surface-1: #e8963a;
+  --selection-ink: #051759;
+  --black: #2a2418;
+  --red: #6e2a1f;
+  --green: #2f3a1f;
+  --yellow: #5a4410;
+  --blue: #24365a;
+  --magenta: #5a2a4a;
+  --cyan: #1f4a4a;
+  --white: #ec9c42;
+  --bright-black: #4a3d2b;
+  --bright-red: #84362a;
+  --bright-green: #3b4826;
+  --bright-yellow: #6e5418;
+  --bright-blue: #2f4470;
+  --bright-magenta: #6e3459;
+  --bright-cyan: #285c5c;
+  --bright-white: #ffbd6e;
+  --palette-17: #f6a64b;
+  --palette-18: #f0a249;
+  --palette-24: #ea9f4c;
+  --palette-31: #e39c4f;
+  --palette-38: #dc9a52;
+  --palette-67: #d69652;
+  --palette-103: #d08f50;
+  --palette-139: #ca884d;
+  --palette-169: #be7c46;
+  --palette-175: #c4824a;
+  --palette-198: #b2703f;
+  --palette-205: #b87643;
+  --palette-211: #ad6c3b;
+  --palette-214: #855a1f;
+  --palette-215: #8a5d22;
+  --palette-218: #a86a37;
+  --palette-222: #8f6025;
+  --palette-223: #946229;
+  --palette-224: #99642c;
+  --palette-225: #a36834;
+  --palette-251: #051759;
+  --palette-254: #9e6630;
+}

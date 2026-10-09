@@ -1,0 +1,68 @@
+/* vim-dusk
+   dusk as vim draws it: the same ground, the ink a little brighter, about
+   6.4:1, for a terminal that sits beside a vaporwave-dusk vim.
+   the same sheet makes that vim: `libreadme nvim` turns it into the
+   vaporwave-dusk colour scheme, its terminal in the sixteen below.
+
+   the source of a ghostty theme: `libreadme ghostty` makes it from this
+   sheet. cells 16 to 255 are --palette-N. */
+[data-theme="vim-dusk"] {
+  --ground: #271d3b;
+  --ink: #b0a295;
+  --cursor: #b893b4;
+  --cursor-ink: #271d3b;
+  --surface-1: #3a2260;
+  --selection-ink: #b0a295;
+  /* the editor's roles, for libreadme nvim; the selection is surface-1 */
+  --dim: #9e9590;
+  --heading: #b893b4;
+  --link: #84aeb0;
+  --code: #94b08e;
+  --string: #c4a57a;
+  --gutter: #5c4585;
+  --cursor-line: #30264a;
+  --panel: #332850;
+  --border: #432c6b;
+  --err: #c9958f;
+  --warn: #c4a57a;
+  --info: #84aeb0;
+  --hint: #94b08e;
+  --black: #291f3e;
+  --red: #c9958f;
+  --green: #8f9580;
+  --yellow: #c4a57a;
+  --blue: #8a93a6;
+  --magenta: #b893b4;
+  --cyan: #84aeb0;
+  --white: #a3988e;
+  --bright-black: #7f746b;
+  --bright-red: #d1a09a;
+  --bright-green: #979d88;
+  --bright-yellow: #ccae84;
+  --bright-blue: #939caf;
+  --bright-magenta: #c19dbd;
+  --bright-cyan: #8eb8ba;
+  --bright-white: #ab9d90;
+  --palette-17: #2e2444;
+  --palette-18: #322849;
+  --palette-24: #2f3550;
+  --palette-31: #2f3d55;
+  --palette-38: #32465a;
+  --palette-67: #3b4a5c;
+  --palette-103: #45475f;
+  --palette-139: #4e4560;
+  --palette-169: #5e4560;
+  --palette-175: #57445e;
+  --palette-198: #6a465d;
+  --palette-205: #64465f;
+  --palette-211: #6e4b5c;
+  --palette-214: #8a6c40;
+  --palette-215: #866f46;
+  --palette-218: #725257;
+  --palette-222: #83704c;
+  --palette-223: #806b4e;
+  --palette-224: #7d6650;
+  --palette-225: #765a55;
+  --palette-251: #a99c8f;
+  --palette-254: #7a6152;
+}

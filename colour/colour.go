@@ -2,10 +2,11 @@
 // when text of one colour is painted over surfaces of others, as numbers.
 //
 // Everything here is WCAG 2.1's own relative-luminance and contrast-ratio
-// formulas, so the numbers agree with any auditor's. The lamp arithmetic,
-// hex and the hsl cylinder, comes from libtheme-css; the promise, the two
-// formulas and the compositing, is written here and has no dependency, so
-// it cannot drift.
+// formulas, so the numbers agree with any auditor's.
+//
+// The lamp arithmetic, hex and the hsl cylinder, comes from libtheme;
+// the promise, the two formulas and the compositing, is written here and has
+// no dependency, so it cannot drift.
 package colour
 
 import (
@@ -17,15 +18,18 @@ import (
 	"github.com/janearc/libtheme-css/spaces/srgb"
 )
 
-// libtheme-css is the first customer relationship this library has: the
-// lamp arithmetic that used to live here, hex, the hsl cylinder, now comes
-// from there, and this package keeps only what is its own promise: WCAG's
-// luminance and contrast, and compositing. The boundary is one multiply:
-// libreadme's channels are 0 to 255 because that is what a stylesheet
-// says, libtheme's are 0 to 1 because that is what a lamp is.
+// libtheme does the lamp arithmetic: hex and the hsl cylinder come from
+// there. This package keeps only what it promises itself: WCAG's luminance
+// and contrast, and compositing.
+//
+// The boundary is one multiply. libreadme's channels are 0 to 255, because
+// that is what a stylesheet says. libtheme's are 0 to 1, because that is
+// what a lamp is.
 
 // lamps is the colour in libtheme's terms.
-func (c RGB) lamps() srgb.RGB { return srgb.RGB{R: c.R / 255, G: c.G / 255, B: c.B / 255} }
+func (c RGB) lamps() srgb.RGB {
+	return srgb.RGB{R: c.R / 255, G: c.G / 255, B: c.B / 255}
+}
 
 // fromLamps is libtheme's colour in this library's terms.
 func fromLamps(c srgb.RGB) RGB { return RGB{c.R * 255, c.G * 255, c.B * 255} }
@@ -34,9 +38,9 @@ func fromLamps(c srgb.RGB) RGB { return RGB{c.R * 255, c.G * 255, c.B * 255} }
 type RGB struct{ R, G, B float64 }
 
 // RGBA is a colour with an alpha, 0 (clear) to 1 (opaque). Almost every
-// surface a page paints is translucent, so this is the common case, and the
-// rule is that nothing may be measured against the colour it was DECLARED as:
-// composite it first (see Over).
+// surface a page paints is translucent, so this is the common case. Nothing
+// may be measured against the colour it was declared as: composite it first
+// (see Over).
 type RGBA struct {
 	RGB
 	A float64
@@ -50,30 +54,61 @@ func Parse(s string) (RGBA, error) {
 	case strings.HasPrefix(s, "#"):
 		c, err := srgb.FromHex(s)
 		if err != nil {
-			return RGBA{}, fmt.Errorf("colour: %q is not #rgb or #rrggbb: %w", s, err)
+			return RGBA{}, fmt.Errorf(
+				"colour: %q is not #rgb or #rrggbb: %w", s, err)
 		}
 		return RGBA{fromLamps(c), 1}, nil
 	case strings.HasPrefix(s, "rgb(") || strings.HasPrefix(s, "rgba("):
-		inner := strings.TrimSuffix(s[strings.IndexByte(s, '(')+1:], ")")
-		parts := strings.FieldsFunc(inner, func(r rune) bool { return r == ',' || r == ' ' || r == '/' })
+		inner := strings.TrimSuffix(
+			s[strings.IndexByte(s, '(')+1:], ")")
+		separator := func(r rune) bool {
+			return r == ',' || r == ' ' || r == '/'
+		}
+		parts := strings.FieldsFunc(inner, separator)
 		if len(parts) != 3 && len(parts) != 4 {
-			return RGBA{}, fmt.Errorf("colour: %q needs three or four channels", s)
+			return RGBA{}, fmt.Errorf(
+				"colour: %q needs three or four channels", s)
 		}
 		var vals [4]float64
 		vals[3] = 1
 		for i, p := range parts {
-			v, err := strconv.ParseFloat(strings.TrimSuffix(p, "%"), 64)
+			v, err := channel(p, i == 3)
 			if err != nil {
-				return RGBA{}, fmt.Errorf("colour: %q: %w", s, err)
-			}
-			if i == 3 && strings.HasSuffix(p, "%") {
-				v /= 100
+				return RGBA{}, fmt.Errorf(
+					"colour: %q: %w", s, err)
 			}
 			vals[i] = v
 		}
 		return RGBA{RGB{vals[0], vals[1], vals[2]}, vals[3]}, nil
 	}
-	return RGBA{}, fmt.Errorf("colour: %q is not a colour this library reads", s)
+	return RGBA{}, fmt.Errorf(
+		"colour: %q is not a colour this library reads", s)
+}
+
+// channel is one channel of rgb() or rgba(). A lamp is 0 to 255, or a
+// percentage of 255. The alpha is 0 to 1, or a percentage of 1. A channel
+// outside its range, or not a number, is an error, so a wrong colour is
+// never graded as a right one.
+func channel(text string, alpha bool) (float64, error) {
+	percent := strings.HasSuffix(text, "%")
+	value, err := strconv.ParseFloat(strings.TrimSuffix(text, "%"), 64)
+	if err != nil {
+		return 0, err
+	}
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return 0, fmt.Errorf("%s is not a number", text)
+	}
+	top := 255.0
+	if alpha {
+		top = 1
+	}
+	if percent {
+		value = value / 100 * top
+	}
+	if value < 0 || value > top {
+		return 0, fmt.Errorf("%s is outside nought to %g", text, top)
+	}
+	return value, nil
 }
 
 // MustParse is Parse for literals in code and tests.
@@ -90,19 +125,25 @@ func (c RGB) Hex() string { return c.lamps().Hex() }
 
 // Luminance is WCAG's relative luminance, 0 (black) to 1 (white).
 //
-// Yes, 0.03928. Before you write in: the sRGB standard puts the break in
-// its curve at 0.04045, and WCAG 2.0 copied it as 0.03928 in 2008, from
-// an earlier draft, and has carried the typo through every revision
-// since because fixing it would change the fourth decimal of a number
-// that has been in accessibility audits for fifteen years. The
-// difference moves a contrast ratio by less than one part in ten
-// thousand and has never once changed whether a colour passed. This
-// library uses WCAG's number, on purpose, because its promise is that
-// its ratios agree with any auditor's tool to every printed digit, and
-// every auditor's tool has the typo. A library that fixed it would be
-// more correct and less useful. If that offends you, the sRGB curve
-// with the right constant is in libtheme-css, where correctness is the
-// promise and nobody is being audited.
+// Yes, 0.03928. Before you write in: the sRGB standard puts the break in its
+// curve at 0.04045, and WCAG 2.0 copied it as 0.03928 in 2008, from an
+// earlier draft.
+//
+// WCAG has carried the typo through every revision since because fixing it
+// would change the fourth decimal of a number that has been in accessibility
+// audits since 2008.
+//
+// The difference moves a contrast ratio by less than one part in ten
+// thousand and has never once changed whether a colour passed.
+//
+// This library uses WCAG's number on purpose. Its promise is that its ratios
+// agree with any auditor's tool to every printed digit, and every auditor's
+// tool has the typo. A library that fixed it would be more correct and less
+// useful.
+//
+// If that offends you, the sRGB curve with the right constant is in
+// libtheme, where correctness is the promise and nobody is being
+// audited.
 func Luminance(c RGB) float64 {
 	lin := func(v float64) float64 {
 		v /= 255
@@ -163,8 +204,8 @@ func Saturation(c RGB) float64 {
 }
 
 // HueApart is the circular distance between two hues in degrees, 0 to 180.
-// A contrast ratio is blind to this, and it is the second thing a reader
-// needs: a red on a slightly darker red has a brightness edge and no colour
+// A contrast ratio is blind to it, and it is the second thing a reader
+// needs. A red on a slightly darker red has a brightness edge and no colour
 // edge, and it smears.
 func HueApart(a, b RGB) float64 {
 	ha, _, _ := HSL(a)

@@ -134,3 +134,50 @@ func TestChipInkClearsItsOwnFillOnEverySurface(t *testing.T) {
 		t.Errorf("the red drifted hue by %.1f degrees", HueApart(red, got))
 	}
 }
+
+// FillFor keeps ChipFill's fill when the label reads on it, and otherwise
+// moves the fill's lightness, not its hue, until the label clears min: a
+// mid-tone colour on a mid-tone page, where ChipFill's fill lands beside it.
+func TestFillFor(t *testing.T) {
+	surface, ink := RGB{164, 106, 30}, RGB{151, 95, 26}
+	plain := ChipFill(ink, surface, 0.2, 0.06)
+	fill, reached := FillFor(ink, surface, 4.5, 0.2, 0.06)
+	if !reached || Contrast(ink, fill) < 4.5 {
+		t.Errorf("the label is %.1f:1 on its fill", Contrast(ink, fill))
+	}
+	plainHue, _, _ := HSL(plain)
+	if h, _, _ := HSL(fill); math.Abs(h-plainHue) > 1 {
+		t.Errorf("the fill's hue moved from %.0f to %.0f", plainHue, h)
+	}
+	dark := RGB{20, 20, 20}
+	light := RGB{240, 240, 240}
+	if got, _ := FillFor(dark, light, 4.5, 0.2, 0.06); got != ChipFill(dark, light, 0.2, 0.06) {
+		t.Error("a label that reads on ChipFill's fill got another")
+	}
+	if _, reached := FillFor(ink, surface, 22, 0.2, 0.06); reached {
+		t.Error("a contrast past 21:1 was reached")
+	}
+}
+
+// TestParseScalesPercentAndRefusesNonsense reads rgb(100%,100%,100%) as
+// white, and refuses a channel past its range or not a number, so the
+// checker never grades a colour the stylesheet did not mean.
+func TestParseScalesPercentAndRefusesNonsense(t *testing.T) {
+	white, err := Parse("rgb(100%, 100%, 100%)")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := white.Hex(); got != "#ffffff" {
+		t.Errorf("rgb(100%%,100%%,100%%) read as %s", got)
+	}
+	half, err := Parse("rgba(0, 0, 0, 50%)")
+	if err != nil || half.A != 0.5 {
+		t.Errorf("an alpha of 50%% read as %v (%v)", half.A, err)
+	}
+	for _, nonsense := range []string{"rgb(300,0,0)", "rgba(0,0,0,2)",
+		"rgb(NaN,0,0)", "rgb(-1,0,0)", "rgb(101%,0,0)"} {
+		if _, err := Parse(nonsense); err == nil {
+			t.Errorf("%s was read as a colour", nonsense)
+		}
+	}
+}
