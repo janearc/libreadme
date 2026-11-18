@@ -259,6 +259,39 @@ func TestFillForClearsContrastAfterItIsWrittenDown(t *testing.T) {
 	}
 }
 
+func TestFillForMeetsContrastBeforeAndAfterExport(t *testing.T) {
+	t.Parallel()
+	black := RGB{}
+	const minContrast = 4.5
+	fill, ok := FillFor(black, black, minContrast, 0.2, 0.06)
+	if !ok {
+		t.Fatal("FillFor did not reach the requested contrast")
+	}
+	if contrast := Contrast(black, fill); contrast < minContrast {
+		t.Errorf("returned fill %v has contrast %.6f, want at least %g", fill, contrast, minContrast)
+	}
+	written, err := Parse(fill.Hex())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if contrast := Contrast(black, written.RGB); contrast < minContrast {
+		t.Errorf("exported fill %s has contrast %.6f, want at least %g", fill.Hex(), contrast, minContrast)
+	}
+}
+
+func TestFillForKeepsHueWhenStartingFillRoundsToBlack(t *testing.T) {
+	t.Parallel()
+	ink, surface := RGB{0, 0, 1}, RGB{}
+	const minContrast = 4.5
+	fill, ok := FillFor(ink, surface, minContrast, 0.2, 0.001)
+	if contrast := Contrast(ink, fill); !ok || contrast < minContrast {
+		t.Fatalf("FillFor returned %v at %.6f:1, success=%v, want at least %g:1", fill, contrast, ok, minContrast)
+	}
+	if fill.B <= max(fill.R, fill.G) {
+		t.Errorf("fill %s lost its blue hue", fill.Hex())
+	}
+}
+
 func TestBandIntoFindsReachableColour(t *testing.T) {
 	t.Parallel()
 	band := Band{Low: 4.5, High: 21, Centre: 7}

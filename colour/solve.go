@@ -89,29 +89,36 @@ func (b Band) Into(base RGB, surfaces []RGB) (RGB, bool) {
 // far the fill's lightness sits from the surface, so the chip reads as an
 // object rather than a stain.
 func ChipFill(ink, surface RGB, sat, step float64) RGB {
+	return chipFillSeed(ink, surface, sat, step).Painted()
+}
+
+func chipFillSeed(ink, surface RGB, sat, step float64) RGB {
 	h, _, _ := HSL(ink)
 	_, _, sl := HSL(surface)
 	l := sl + step
 	if sl > 0.5 {
 		l = sl - step
 	}
-	return FromHSL(h, sat, l).Painted()
+	return FromHSL(h, sat, l)
 }
 
 // FillFor is the fill a label in a fixed colour is drawn on, so that it
 // reads. It starts from ChipFill's fill. When the label does not clear min
 // against it, the fill's lightness moves away from the label's until it
-// does, keeping its hue and saturation.
+// does, keeping the starting hue and saturation. A candidate must meet min
+// both as returned and when written as hex.
 //
 // ChipInk moves the ink. This is for a label whose colour is the point, a
 // colour being shown, where only the fill can move. The second result is
 // false when no lightness reaches min, and the fill is then ChipFill's.
 func FillFor(ink, surface RGB, min, sat, step float64) (RGB, bool) {
-	fill := ChipFill(ink, surface, sat, step)
+	seed := chipFillSeed(ink, surface, sat, step)
+	fill := seed.Painted()
 	if Contrast(ink, fill) >= min {
 		return fill, true
 	}
-	h, s, l := HSL(fill)
+	// A dark seed can round to black and lose its hue and saturation.
+	h, s, l := HSL(seed)
 	away := 1.0
 	if Luminance(ink) > Luminance(fill) {
 		away = -1
@@ -123,7 +130,7 @@ func FillFor(ink, surface RGB, min, sat, step float64) (RGB, bool) {
 				break
 			}
 			candidate := FromHSL(h, s, nl)
-			if Contrast(ink, candidate.Painted()) >= min {
+			if Contrast(ink, candidate) >= min && Contrast(ink, candidate.Painted()) >= min {
 				return candidate, true
 			}
 		}
