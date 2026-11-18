@@ -32,7 +32,11 @@ func golden(t *testing.T, name string) Theme {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			t.Error(err)
+		}
+	}()
 	th, err := Read(f)
 	if err != nil {
 		t.Fatalf("%s: %v", name, err)

@@ -41,7 +41,7 @@ func (b Band) Into(base RGB, surfaces []RGB) (RGB, bool) {
 			if nl < 0 || nl > 1 {
 				return
 			}
-			cand := FromHSL(h, s, nl)
+			cand := FromHSL(h, s, nl).Painted()
 			worst := math.Inf(1)
 			ok := true
 			for _, bg := range surfaces {
@@ -95,7 +95,7 @@ func ChipFill(ink, surface RGB, sat, step float64) RGB {
 	if sl > 0.5 {
 		l = sl - step
 	}
-	return FromHSL(h, sat, l)
+	return FromHSL(h, sat, l).Painted()
 }
 
 // FillFor is the fill a label in a fixed colour is drawn on, so that it
@@ -123,7 +123,7 @@ func FillFor(ink, surface RGB, min, sat, step float64) (RGB, bool) {
 				break
 			}
 			candidate := FromHSL(h, s, nl)
-			if Contrast(ink, candidate) >= min {
+			if Contrast(ink, candidate.Painted()) >= min {
 				return candidate, true
 			}
 		}
@@ -151,7 +151,7 @@ func ChipInk(
 		if nl < 0 || nl > 1 {
 			break
 		}
-		cand := FromHSL(h, s, nl)
+		cand := FromHSL(h, s, nl).Painted()
 		ok := true
 		for _, bg := range surfaces {
 			fill := ChipFill(cand, bg, fillSat, fillStep)
