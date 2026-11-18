@@ -181,3 +181,129 @@ func TestParseScalesPercentAndRefusesNonsense(t *testing.T) {
 		}
 	}
 }
+
+// A solved colour is written down as hex and read back by everything that
+// follows, so the value that is measured has to be the value that can be
+// written. Before Painted, the solver measured a colour between two eight-bit
+// values: #6e9fff into a 10 to 12.5 band over #111217 and #24252b solved to
+// 12.4758:1 and was written as #bed4ff, which is 12.5149:1 and outside the
+// band the solver had just satisfied. check then failed fix's own output.
+func TestIntoStaysInTheBandAfterItIsWrittenDown(t *testing.T) {
+	band := Band{Low: 10, High: 12.5, Centre: 11}
+	surfaces := []RGB{{17, 18, 23}, {36, 37, 43}}
+	inks := []RGB{
+		{110, 159, 255}, // the link that found this
+		{204, 204, 220},
+		{129, 130, 141},
+		{141, 142, 154},
+		{120, 255, 214},
+		{255, 88, 143},
+	}
+	for _, ink := range inks {
+		got, ok := band.Into(ink, surfaces)
+		if !ok {
+			continue // unreachable bands are a different test
+		}
+		written, err := Parse(got.Hex())
+		if err != nil {
+			t.Fatalf("%s: %v", got.Hex(), err)
+		}
+		for _, bg := range surfaces {
+			r := Contrast(written.RGB, bg)
+			if !band.Contains(r) {
+				t.Errorf("%v solved to %s, which is %.4f:1 on %s: outside the band it was solved for",
+					ink, got.Hex(), r, bg.Hex())
+			}
+		}
+	}
+}
+
+// The same holds for a chip: its ink and its fill are both written down.
+func TestChipInkClearsItsFillAfterItIsWrittenDown(t *testing.T) {
+	surfaces := []RGB{{17, 18, 23}, {36, 37, 43}}
+	for _, ink := range []RGB{{255, 88, 143}, {120, 255, 214}, {226, 185, 123}} {
+		got, ok := ChipInk(ink, surfaces, 4.5, 0.18, 0.05)
+		if !ok {
+			continue
+		}
+		written, err := Parse(got.Hex())
+		if err != nil {
+			t.Fatalf("%s: %v", got.Hex(), err)
+		}
+		for _, bg := range surfaces {
+			fill := ChipFill(written.RGB, bg, 0.18, 0.05)
+			painted, err := Parse(fill.Hex())
+			if err != nil {
+				t.Fatalf("%s: %v", fill.Hex(), err)
+			}
+			if r := Contrast(written.RGB, painted.RGB); r < 4.5 {
+				t.Errorf("chip %s on its fill %s is %.4f:1, under the floor once both are written",
+					got.Hex(), painted.Hex(), r)
+			}
+		}
+	}
+}
+
+func TestFillForClearsContrastAfterItIsWrittenDown(t *testing.T) {
+	ink, surface := RGB{0, 0, 102}, RGB{36, 37, 43}
+	fill, ok := FillFor(ink, surface, 3, 0.2, 0.06)
+	if !ok {
+		t.Fatal("FillFor did not reach the requested contrast")
+	}
+	written, err := Parse(fill.Hex())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := Contrast(ink, written.RGB); got < 3 {
+		t.Fatalf("written fill %s has contrast %f, want at least 3", fill.Hex(), got)
+	}
+}
+
+func TestFillForMeetsContrastBeforeAndAfterExport(t *testing.T) {
+	t.Parallel()
+	black := RGB{}
+	const minContrast = 4.5
+	fill, ok := FillFor(black, black, minContrast, 0.2, 0.06)
+	if !ok {
+		t.Fatal("FillFor did not reach the requested contrast")
+	}
+	if contrast := Contrast(black, fill); contrast < minContrast {
+		t.Errorf("returned fill %v has contrast %.6f, want at least %g", fill, contrast, minContrast)
+	}
+	written, err := Parse(fill.Hex())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if contrast := Contrast(black, written.RGB); contrast < minContrast {
+		t.Errorf("exported fill %s has contrast %.6f, want at least %g", fill.Hex(), contrast, minContrast)
+	}
+}
+
+func TestFillForKeepsHueWhenStartingFillRoundsToBlack(t *testing.T) {
+	t.Parallel()
+	ink, surface := RGB{0, 0, 1}, RGB{}
+	const minContrast = 4.5
+	fill, ok := FillFor(ink, surface, minContrast, 0.2, 0.001)
+	if contrast := Contrast(ink, fill); !ok || contrast < minContrast {
+		t.Fatalf("FillFor returned %v at %.6f:1, success=%v, want at least %g:1", fill, contrast, ok, minContrast)
+	}
+	if fill.B <= max(fill.R, fill.G) {
+		t.Errorf("fill %s lost its blue hue", fill.Hex())
+	}
+}
+
+func TestBandIntoFindsReachableColour(t *testing.T) {
+	t.Parallel()
+	band := Band{Low: 4.5, High: 21, Centre: 7}
+	got, ok := band.Into(RGB{255, 255, 255}, []RGB{{0, 0, 0}})
+	if !ok || !band.Contains(Contrast(got, RGB{0, 0, 0})) {
+		t.Fatalf("reachable band failed: %v %v", got, ok)
+	}
+}
+func TestBandIntoDoesNotAcceptImpossibleContrast(t *testing.T) {
+	t.Parallel()
+	_, ok := (Band{Low: 22, High: 23, Centre: 22.5}).Into(RGB{255, 0, 0}, []RGB{{0, 0, 0}})
+	if ok {
+		t.Fatal("solver accepted contrast above the physical maximum")
+	}
+}

@@ -771,7 +771,7 @@ func measureVerb(args []string) error {
 		"weight, line height and letter spacing from graded rows. "+
 		"The hue rule and the taxes are carried over from %s and "+
 		"were not re-measured.",
-		today, kind, ground.RGB.Hex(), base.Name)
+		today, kind, ground.Hex(), base.Name)
 	p.Evidence = nil
 	for _, l := range lads {
 		p.Evidence = append(p.Evidence, filepath.Join(*out, l.file))

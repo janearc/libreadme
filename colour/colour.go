@@ -123,6 +123,12 @@ func MustParse(s string) RGBA {
 // Hex renders a colour as #rrggbb, clamped and rounded.
 func (c RGB) Hex() string { return c.lamps().Hex() }
 
+// Painted returns c rounded to the eight-bit channels written by Hex.
+// Contrast checks use these channels to match the exported stylesheet.
+func (c RGB) Painted() RGB {
+	return RGB{math.Round(c.R), math.Round(c.G), math.Round(c.B)}
+}
+
 // Luminance is WCAG's relative luminance, 0 (black) to 1 (white).
 //
 // Yes, 0.03928. Before you write in: the sRGB standard puts the break in its

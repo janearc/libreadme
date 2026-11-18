@@ -32,7 +32,9 @@ func TestGhosttyWritesTheThemeInUse(t *testing.T) {
 			t.Fatal(err)
 		}
 		want, err := ghostty.Read(f)
-		f.Close()
+		if err := f.Close(); err != nil {
+			t.Fatal(err)
+		}
 		if err != nil {
 			t.Fatal(err)
 		}
